@@ -3,6 +3,7 @@ package com.example.dellaanjeh.yummy_users;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private String urlJson = "https://api.slack.com/api/users.list?token=xoxp-5048173296-5048487710-18650790535-1cc8644082";
     private ProgressDialog pDialog;
     private static String TAG = MainActivity.class.getSimpleName();
+    SharedPreferences sharedPreferences;
 
     private RequestQueue mRequestQueue;
     @Override
@@ -72,7 +74,48 @@ public class MainActivity extends AppCompatActivity {
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Please wait...");
         pDialog.setCancelable(false);
+        sharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+
         makeJsonObjectRequest();
+    }
+
+    @Override
+    protected void onPause() {
+        // adds user information to shared preferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        for (int i = 0; i < adapter.getCount(); i++) {
+            UserList user = adapter.getItem(i);
+            editor.putString("Username", user.getUsername());
+            editor.putString("Name", user.getName());
+            editor.putString("Email", user.getEmail());
+            editor.putString("ImageURL", user.getImageUrl());
+            editor.putString("Title", user.getTitle());
+        }
+        editor.commit();
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        // pulls user information from shared preferences
+        for (int i = 0; i < adapter.getCount(); i++) {
+            UserList user = adapter.getItem(i);
+            sharedPreferences.getString("Username", user.getUsername());
+            sharedPreferences.getString("Name", user.getName());
+            sharedPreferences.getString("Email", user.getEmail());
+            sharedPreferences.getString("ImageURL", user.getImageUrl());
+            sharedPreferences.getString("Title", user.getTitle());
+            if (!user.getUsername().equals("")) {
+                adapter.add(new UserList(user.getUsername(), user.getName(),
+                        user.getEmail(), user.getImageUrl(), user.getTitle()));
+            } else {
+                break;
+            }
+        }
+
+        super.onResume();
     }
 
     private void makeJsonObjectRequest() {
@@ -128,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     private void showpDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
@@ -136,27 +180,5 @@ public class MainActivity extends AppCompatActivity {
     private void hidepDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
