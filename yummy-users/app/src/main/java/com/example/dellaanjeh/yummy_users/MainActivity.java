@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<UserList> adapter;
     private String urlJson = "https://api.slack.com/api/users.list?token=xoxp-5048173296-5048487710-18650790535-1cc8644082";
     private ProgressDialog pDialog;
-    private String username;
-    private Intent intent;
     private static String TAG = MainActivity.class.getSimpleName();
 
     private RequestQueue mRequestQueue;
@@ -57,10 +55,16 @@ public class MainActivity extends AppCompatActivity {
         adapter = new UserListAdapter(MainActivity.this, R.layout.list_view, userList);
         lvUsers = (ListView) findViewById(R.id.lvUsers);
         lvUsers.setAdapter(adapter);
-        intent = new Intent(MainActivity.this, ProfileActivity.class);
         lvUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                UserList user = adapter.getItem(position);
+                intent.putExtra("EXTRA_USERNAME", user.getUsername());
+                intent.putExtra("EXTRA_NAME", user.getName());
+                intent.putExtra("EXTRA_EMAIL", user.getEmail());
+                intent.putExtra("EXTRA_IMAGEURL", user.getImageUrl());
+                intent.putExtra("EXTRA_TITLE", user.getTitle());
                 startActivity(intent);
             }
         });
@@ -91,10 +95,12 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < members.length(); i++) {
                         JSONObject user = members.getJSONObject(i);
                         JSONObject profile = user.getJSONObject("profile");
-                        username = user.getString("name");
-                        intent.putExtra("EXTRA_USERNAME", username);
+                        String username = user.getString("name");
                         String name = profile.getString("real_name");
-                        adapter.add(new UserList(username, name));
+                        String email = profile.getString("email");
+                        String imageUrl = profile.getString("image_192");
+                        String title = "employee";
+                        adapter.add(new UserList(username, name, email, imageUrl, title));
                     }
 
                 } catch (JSONException e) {

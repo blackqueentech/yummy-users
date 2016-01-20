@@ -7,21 +7,15 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@color/yellow"
+    android:background="@drawable/bg"
     tools:context="com.example.dellaanjeh.yummy_users.ProfileActivity">
-
-    <ImageView
-        android:id="@+id/ivBackground"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:src="@drawable/donut"
-        android:layout_gravity="bottom"
-        android:scaleType="fitEnd"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+
+        android:gravity="center_horizontal">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -33,10 +27,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/tvUsername"
             android:text="username"
-            android:textColor="@color/melon"/>
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:textColor="@color/blue"/>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:padding="5dp">
 
