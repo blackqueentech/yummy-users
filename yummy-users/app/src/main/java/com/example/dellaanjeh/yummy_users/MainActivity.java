@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,10 +43,12 @@ public class MainActivity extends AppCompatActivity {
     private ListView lvUsers;
     private List<UserList> userList;
     private ArrayAdapter<UserList> adapter;
+    private  List<String> userListInfo;
     private String urlJson = "https://api.slack.com/api/users.list?token=xoxp-5048173296-5048487710-18650790535-1cc8644082";
     private ProgressDialog pDialog;
     private static String TAG = MainActivity.class.getSimpleName();
     SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     private RequestQueue mRequestQueue;
     @Override
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         userList = new ArrayList<UserList>();
+        userListInfo = new LinkedList<String>();
         adapter = new UserListAdapter(MainActivity.this, R.layout.list_view, userList);
         lvUsers = (ListView) findViewById(R.id.lvUsers);
         lvUsers.setAdapter(adapter);
@@ -74,16 +78,30 @@ public class MainActivity extends AppCompatActivity {
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Please wait...");
         pDialog.setCancelable(false);
-        sharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+        for(int i = 0; i <= sharedPreferences.getAll().size(); i++) {
+            userListInfo.add(i, sharedPreferences.getString("", ));
+        }
 
+        userList.addAll(userListInfo);
+        adapter.notifyDataSetChanged();
+
+        if (!sharedPreferences.contains("initialized")) {
+            makeJsonObjectRequest();
+        } else {
+            onResume();
+        }
+        // TODO: only have this run when shared preferences is uninitialized
         makeJsonObjectRequest();
+
     }
 
     @Override
     protected void onPause() {
+        super.onPause();
+        editor = sharedPreferences.edit();
+        editor.putBoolean("initialized", true);
         // adds user information to shared preferences
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
         for (int i = 0; i < adapter.getCount(); i++) {
             UserList user = adapter.getItem(i);
             editor.putString("Username", user.getUsername());
@@ -94,28 +112,21 @@ public class MainActivity extends AppCompatActivity {
         }
         editor.commit();
 
-        super.onPause();
     }
 
     @Override
     protected void onResume() {
+        super.onResume();
         // pulls user information from shared preferences
-        for (int i = 0; i < adapter.getCount(); i++) {
-            UserList user = adapter.getItem(i);
+        for (int i = 1; i < sharedPreferences.getAll().size(); i = i+5) {
             sharedPreferences.getString("Username", user.getUsername());
             sharedPreferences.getString("Name", user.getName());
             sharedPreferences.getString("Email", user.getEmail());
             sharedPreferences.getString("ImageURL", user.getImageUrl());
             sharedPreferences.getString("Title", user.getTitle());
-            if (!user.getUsername().equals("")) {
-                adapter.add(new UserList(user.getUsername(), user.getName(),
-                        user.getEmail(), user.getImageUrl(), user.getTitle()));
-            } else {
-                break;
-            }
+            adapter.add(new UserList(user.getUsername(), user.getName(),
+                    user.getEmail(), user.getImageUrl(), user.getTitle()));
         }
-
-        super.onResume();
     }
 
     private void makeJsonObjectRequest() {
@@ -139,12 +150,15 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject user = members.getJSONObject(i);
                         JSONObject profile = user.getJSONObject("profile");
                         String username = user.getString("name");
-                        String name = profile.getString("real_name");
-                        String email = profile.getString("email");
-                        String imageUrl = profile.getString("image_192");
-                        String title = "employee";
-                        adapter.add(new UserList(username, name, email, imageUrl, title));
+                        if (!username.equals("slackbot")) {
+                            String name = profile.getString("real_name");
+                            String email = profile.getString("email");
+                            String imageUrl = profile.getString("image_192");
+                            String title = profile.getString("title");
+                            adapter.add(new UserList(username, name, email, imageUrl, title));
+                        }
                     }
+                    adapter.notifyDataSetChanged();
 
                 } catch (JSONException e) {
                     e.printStackTrace();

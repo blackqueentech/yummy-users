@@ -29,7 +29,7 @@
             android:text="username"
             android:textSize="30dp"
             android:textStyle="bold"
-            android:textColor="@color/blue"/>
+            android:textColor="@color/melon"/>
 
         <RelativeLayout
             android:layout_width="250dp"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="Name"
                 android:textStyle="bold"
-                android:textColor="@color/melon"
+                android:textColor="@color/blue"
                 android:layout_marginTop="5dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"/>
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:textStyle="bold"
-                android:textColor="@color/melon"
+                android:textColor="@color/blue"
                 android:layout_below="@+id/tvName"
                 android:text="Title"/>
 
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:textStyle="bold"
-                android:textColor="@color/melon"
+                android:textColor="@color/blue"
                 android:layout_below="@+id/tvTitle"
                 android:text="Email"/>
 
