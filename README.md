@@ -1,6 +1,6 @@
 # ![yummy-users](media/1.png)
 
-This sweet and delicious app displays a list of all members of a Slack team. Upon selecting a team member from the list, the user is take to their expanded profile. 
+This sweet and delicious app displays a list of all members of a Slack team. Upon selecting a team member from the list, the user is taken to their expanded profile. 
 
 Support
 -------
