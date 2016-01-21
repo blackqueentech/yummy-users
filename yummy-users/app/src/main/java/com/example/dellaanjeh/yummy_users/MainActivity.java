@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private List<UserList> userList;
     private ArrayAdapter<UserList> adapter;
     private  List<String> userListInfo;
-    private String urlJson = "https://api.slack.com/api/users.list?token=xoxp-5048173296-5048487710-18650790535-1cc8644082";
+    private String urlJson = "https://api.slack.com/api/users.list?token=xoxp-5048173296-5048487710-19045732087-b5427e3b46";
     private ProgressDialog pDialog;
     private static String TAG = MainActivity.class.getSimpleName();
     SharedPreferences sharedPreferences;
@@ -79,18 +79,7 @@ public class MainActivity extends AppCompatActivity {
         pDialog.setMessage("Please wait...");
         pDialog.setCancelable(false);
         sharedPreferences = this.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-//        for(int i = 0; i <= sharedPreferences.getAll().size(); i++) {
-//            userListInfo.add(i, sharedPreferences.getString("", ));
-//        }
 
-//        userList.addAll(userListInfo);
-        adapter.notifyDataSetChanged();
-
-        if (!sharedPreferences.contains("initialized")) {
-            makeJsonObjectRequest();
-        } else {
-            onResume();
-        }
         // TODO: only have this run when shared preferences is uninitialized
         makeJsonObjectRequest();
 
@@ -159,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                             adapter.add(new UserList(username, name, email, imageUrl, title));
                         }
                     }
-                    adapter.notifyDataSetChanged();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
