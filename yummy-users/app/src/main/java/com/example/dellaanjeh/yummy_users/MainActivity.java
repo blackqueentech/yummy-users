@@ -79,11 +79,11 @@ public class MainActivity extends AppCompatActivity {
         pDialog.setMessage("Please wait...");
         pDialog.setCancelable(false);
         sharedPreferences = this.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-        for(int i = 0; i <= sharedPreferences.getAll().size(); i++) {
-            userListInfo.add(i, sharedPreferences.getString("", ));
-        }
+//        for(int i = 0; i <= sharedPreferences.getAll().size(); i++) {
+//            userListInfo.add(i, sharedPreferences.getString("", ));
+//        }
 
-        userList.addAll(userListInfo);
+//        userList.addAll(userListInfo);
         adapter.notifyDataSetChanged();
 
         if (!sharedPreferences.contains("initialized")) {
@@ -118,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // pulls user information from shared preferences
-        for (int i = 1; i < sharedPreferences.getAll().size(); i = i+5) {
+        for (int i = 1; i < adapter.getCount(); i++) {
+            UserList user = adapter.getItem(i);
             sharedPreferences.getString("Username", user.getUsername());
             sharedPreferences.getString("Name", user.getName());
             sharedPreferences.getString("Email", user.getEmail());
